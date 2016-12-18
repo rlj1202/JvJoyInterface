@@ -1,0 +1,44 @@
+apply plugin: 'java'
+
+sourceSets {
+	main {
+		java {
+			srcDir 'src/main/java'
+		}
+		resources {
+			srcDir 'src/main/java'
+		}
+	}
+}
+
+repositories {
+	jcenter()
+}
+
+dependencies {
+	testCompile 'junit:junit:4.12'
+}
+
+sourceCompatibility = '1.8'
+
+version = '0.1.0'
+def title = 'JvJoyInterface'
+
+jar {
+	manifest {
+		attributes 'Title': title, 'Version': version
+	}
+	
+	from sourceSets.main.output
+	from 'README.md'
+	
+	baseName = title
+}
+
+test {
+	systemProperties 'java.library.path': file('/lib/natives')
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '3.2'
+}
