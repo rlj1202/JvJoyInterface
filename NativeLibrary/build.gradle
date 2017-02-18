@@ -1,0 +1,74 @@
+apply plugin: 'c'
+
+model {
+	platforms {
+		x86 {
+			architecture 'x86'
+		}
+		x64 {
+			architecture 'x86_64'
+		}
+	}
+
+	toolChains {
+		mingwGcc(Gcc) {
+			target('x86') {
+				path 'C:\\MinGW\\bin'
+				
+				cCompiler.executable = 'C:\\MinGW\\bin\\g++.exe'
+				linker.executable = 'C:\\MinGW\\bin\\g++.exe'
+				
+				cCompiler.withArguments { args ->
+					args << '-m32'
+					args << '-IC:/Program Files/mingw-w64/x86_64-6.1.0-win32-seh-rt_v5-rev0/mingw64/x86_64-w64-mingw32/include'
+				}
+				linker.withArguments { args ->
+					args << '-m32'
+					args << '-LC:/MinGW/lib'
+					args << '-LC:/MinGW/lib/gcc/mingw32/4.9.3'
+				}
+			}
+			target('x64') {
+				path 'C:\\Program Files\\mingw-w64\\x86_64-6.1.0-win32-seh-rt_v5-rev0\\mingw64\\bin'
+				
+				cCompiler.executable = 'C:\\Program Files\\mingw-w64\\x86_64-6.1.0-win32-seh-rt_v5-rev0\\mingw64\\bin\\g++.exe'
+				linker.executable = 'C:\\Program Files\\mingw-w64\\x86_64-6.1.0-win32-seh-rt_v5-rev0\\mingw64\\bin\\g++.exe'
+				
+				cCompiler.withArguments { args ->
+					args << '-m64'
+				}
+				linker.withArguments { args ->
+					args << '-m64'
+				}
+			}
+		}
+	}
+
+	components {
+		JvJoyInterface(NativeLibrarySpec) {
+			targetPlatform 'x86'
+			targetPlatform 'x64'
+			
+			binaries {
+				all {
+					// cCompiler.args '-IC:/Program Files/Java/jdk1.8.0_101/include', '-IC:/Program Files/Java/jdk1.8.0_101/include/win32'
+					linker.args '-lvJoyInterface', '-Llib/amd64'
+				}
+				withType(StaticLibraryBinarySpec) {
+					buildable = false
+				}
+			}
+			
+			sources {
+				c {
+					source {
+						srcDir 'src/main/c'
+					}
+					exportedHeaders {
+						srcDir 'src/main/c'
+					}
+				}
+			}
+		}
+	}
+}
